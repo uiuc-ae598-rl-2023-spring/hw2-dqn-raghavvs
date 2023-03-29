@@ -47,8 +47,8 @@ class DQN(nn.Module):
         self.fc3 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
+        x = torch.tanh(self.fc1(x))
+        x = torch.tanh(self.fc2(x))
         return self.fc3(x)
 
 # Define the experience replay buffer
@@ -74,7 +74,7 @@ class ReplayMemory(object):
 
 # Define the DQN agent
 class DQNAgent:
-    def __init__(self, input_size, hidden_size, output_size, batch_size=128, gamma=0.99):
+    def __init__(self, input_size, hidden_size, output_size, batch_size, gamma):
         self.policy_net = DQN(input_size, hidden_size, output_size)
         self.target_net = DQN(input_size, hidden_size, output_size)
         self.target_net.load_state_dict(self.policy_net.state_dict())

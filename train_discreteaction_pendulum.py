@@ -10,6 +10,7 @@ def main():
     env = Pendulum()
 
     # Set the hyperparameters
+    input_size = 64
     batch_size = 128
     gamma = 0.95
     target_update = 10
@@ -64,12 +65,6 @@ def main():
         rewards.append(episode_reward)
 
         #print(f'Episode {i_episode}: reward={episode_reward:.2f}')
-
-        plt.plot(rewards)
-        plt.xlabel('Episode')
-        plt.ylabel('Total Reward')
-        plt.title('Learning Curve')
-        plt.savefig('figures/plot_learning_curve.png')
 
 if __name__ == '__main__':
     main()
