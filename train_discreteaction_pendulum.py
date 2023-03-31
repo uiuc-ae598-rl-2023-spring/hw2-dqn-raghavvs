@@ -66,5 +66,69 @@ def main():
 
         #print(f'Episode {i_episode}: reward={episode_reward:.2f}')
 
+        ########################################
+        ############----PLOTS----###############
+        ########################################
+
+        # Plot - Learning curve
+        plt.plot(rewards)
+        plt.xlabel('Episode')
+        plt.ylabel('Total Reward')
+        plt.title('Learning Curve')
+        plt.savefig('figures/plot_learning_curve.png') 
+        #plt.show()
+
+        # Plot - Example trajectory
+        s = env.reset()
+        s_traj = [s]
+        done = False
+        policy = lambda s: env.num_actions // 2
+        while not done:
+            (s, r, done) = env.step(policy(s))
+            s_traj.append(s)
+        s_traj = torch.tensor(s_traj)
+        plt.plot(s_traj[:, 0].numpy(), s_traj[:, 1].numpy())
+        plt.xlabel('Theta')
+        plt.ylabel('ThetaDot')
+        plt.title('Example Trajectory')
+        plt.savefig('figures/plot_trajectory.png')    
+        #plt.show()
+
+        # Plot - Policy
+        theta_range = torch.linspace(-env.max_theta_for_upright, env.max_theta_for_upright, 100)
+        thetadot_range = torch.linspace(-env.max_thetadot_for_init, env.max_thetadot_for_init, 100)
+        THETA, THETADOT = torch.meshgrid(theta_range, thetadot_range)
+        A = torch.zeros_like(THETA)
+        for i in range(THETA.shape[0]):
+            for j in range(THETA.shape[1]):
+                s = torch.tensor([THETA[i, j], THETADOT[i, j]])
+                A[i, j] = policy(s)
+        plt.pcolormesh(THETA.numpy(), THETADOT.numpy(), A.numpy())
+        plt.xlabel('Theta')
+        plt.ylabel('ThetaDot')
+        plt.title('Policy')
+        plt.colorbar()
+        plt.savefig('figures/plot_policy.png') 
+        #plt.show()
+
+        # Plot - State-Value Function
+        theta_range = torch.linspace(-env.max_theta_for_upright, env.max_theta_for_upright, 100)
+        thetadot_range = torch.linspace(-env.max_thetadot_for_init, env.max_thetadot_for_init, 100)
+        THETA, THETADOT = torch.meshgrid(theta_range, thetadot_range)
+        V = torch.zeros_like(THETA)
+        for i in range(THETA.shape[0]):
+            for j in range(THETA.shape[1]):
+                s = torch.tensor([THETA[i, j], THETADOT[i, j]]).unsqueeze(0)
+                with torch.no_grad():
+                    V[i, j] = agent.policy_net(s).max().item()
+        plt.pcolormesh(THETA.numpy(), THETADOT.numpy(), V.numpy())
+        plt.xlabel('Theta')
+        plt.ylabel('ThetaDot')
+        plt.title('State-Value Function')
+        plt.colorbar()
+        plt.savefig('figures/plot_state_value_function.png') 
+        #plt.show()
+
+
 if __name__ == '__main__':
     main()

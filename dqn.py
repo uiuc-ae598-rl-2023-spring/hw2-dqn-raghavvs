@@ -29,7 +29,7 @@ For each episode:
 Repeat until s is terminal or maximum number of steps is reached. 
 """
 
-####-----IMPORT_LIBRARIES------####
+####-----IMPORT LIBRARIES------####
 
 import random
 import torch
