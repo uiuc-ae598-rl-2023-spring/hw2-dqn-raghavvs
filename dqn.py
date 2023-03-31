@@ -74,7 +74,7 @@ class ReplayMemory(object):
 
 # Define the DQN agent
 class DQNAgent:
-    def __init__(self, input_size, hidden_size, output_size, batch_size, gamma):
+    def __init__(self, input_size, hidden_size, output_size, batch_size, gamma, env, num_episodes, max_steps_per_episode):
         self.policy_net = DQN(input_size, hidden_size, output_size)
         self.target_net = DQN(input_size, hidden_size, output_size)
         self.target_net.load_state_dict(self.policy_net.state_dict())
@@ -129,3 +129,42 @@ class DQNAgent:
             param.grad.data.clamp_(-1, 1)
             
         self.optimizer.step()
+
+    def train_dqn(self):
+        total_rewards = []
+        episode_rewards = []
+        
+        for episode in range(self.num_episodes):
+            state = self.env.reset()
+            episode_reward = 0
+            
+            for step in range(self.max_steps_per_episode):
+                # Select and perform an action
+                action = self.agent.select_action(torch.FloatTensor([state]))
+                next_state, reward, done, _ = env.step(action.item())
+                
+                # Store the transition in the replay memory
+                self.agent.memory.push(torch.FloatTensor([state]),
+                                action,
+                                torch.FloatTensor([next_state]) if not done else None,
+                                torch.FloatTensor([reward]))
+                
+                # Update the DQN agent
+                self.agent.optimize_model()
+                
+                episode_reward += reward
+                state = next_state
+                
+                if done:
+                    break
+            
+            episode_rewards.append(episode_reward)
+            total_reward = sum(episode_rewards)
+            total_rewards.append(total_reward)
+            print("Episode {}: reward={}".format(episode, episode_reward))
+            
+            # Update the target network every 10 episodes
+            if episode % 10 == 0:
+                self.agent.target_net.load_state_dict(self.agent.policy_net.state_dict())
+                
+        return total_rewards
