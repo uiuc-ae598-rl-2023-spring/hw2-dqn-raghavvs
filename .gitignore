@@ -130,5 +130,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-plots.py
-train_discreteaction_pendulum1.py

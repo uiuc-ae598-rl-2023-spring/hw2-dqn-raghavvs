@@ -70,19 +70,21 @@ def main():
         ############----PLOTS----###############
         ########################################
 
-        # Plot - Learning curve
+        ###---PLOT-1: Learning curve - Return vs. Number of Episodes---###
+
         plt.plot(rewards)
         plt.xlabel('Episode')
-        plt.ylabel('Total Reward')
+        plt.ylabel('Return')
         plt.title('Learning Curve')
-        plt.savefig('figures/plot_learning_curve.png') 
-        #plt.show()
+        plt.savefig('figures/plot_learning_curve.png')
 
-        # Plot - Example trajectory
+        ###---PLOT-2: Example trajectory---###
+
+        # Define a policy that maps every state to the "zero torque" action
+        policy = lambda s: env.num_actions // 2
         s = env.reset()
         s_traj = [s]
         done = False
-        policy = lambda s: env.num_actions // 2
         while not done:
             (s, r, done) = env.step(policy(s))
             s_traj.append(s)
@@ -91,10 +93,15 @@ def main():
         plt.xlabel('Theta')
         plt.ylabel('ThetaDot')
         plt.title('Example Trajectory')
-        plt.savefig('figures/plot_trajectory.png')    
-        #plt.show()
+        plt.savefig('figures/plot_trajectory.png')  
 
-        # Plot - Policy
+        ###---PLOT-3: Animated gif of an example trajectory---###
+
+        # Simulate an episode and save the result as an animated gif
+        env.video(policy, filename='figures/train_discreteaction_pendulum.gif')
+
+        ###---PLOT-4: Policy---###
+
         theta_range = torch.linspace(-env.max_theta_for_upright, env.max_theta_for_upright, 100)
         thetadot_range = torch.linspace(-env.max_thetadot_for_init, env.max_thetadot_for_init, 100)
         THETA, THETADOT = torch.meshgrid(theta_range, thetadot_range)
@@ -109,9 +116,9 @@ def main():
         plt.title('Policy')
         plt.colorbar()
         plt.savefig('figures/plot_policy.png') 
-        #plt.show()
 
-        # Plot - State-Value Function
+        ###---PLOT-5: State-value function---###
+
         theta_range = torch.linspace(-env.max_theta_for_upright, env.max_theta_for_upright, 100)
         thetadot_range = torch.linspace(-env.max_thetadot_for_init, env.max_thetadot_for_init, 100)
         THETA, THETADOT = torch.meshgrid(theta_range, thetadot_range)
@@ -127,7 +134,15 @@ def main():
         plt.title('State-Value Function')
         plt.colorbar()
         plt.savefig('figures/plot_state_value_function.png') 
-        #plt.show()
+
+        ###---Ablation Study---###
+
+        # Condition 1: with replay, with target Q
+        # Condition 2: with replay, without target Q
+        # Condition 3: without replay, with target Q
+        # Condition 3: without replay, without target Q
+
+        # Need to create a table
 
 
 if __name__ == '__main__':
