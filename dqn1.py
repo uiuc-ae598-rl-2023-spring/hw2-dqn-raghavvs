@@ -161,3 +161,69 @@ def main(input_size, hidden_size, output_size, batch_size, gamma, env, num_episo
             memory.push((state, action, reward, next_state, done))
             state = next_state
             optimize_model(memory, policy_net, target_net, optimizer, gamma, batch
+
+
+    """ def optimize_model(self):
+        if len(self.memory) < self.batch_size:
+            return
+        
+        transitions = self.memory.sample(self.batch_size)
+        
+        batch = Transition(*zip(*transitions))
+        
+        non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
+                                              batch.next_state)), dtype=torch.bool)
+        
+        non_final_next_states = torch.cat([s for s in batch.next_state
+                                                if s is not None])
+        
+        state_batch = torch.cat(batch.state)
+        action_batch = torch.cat(batch.action)
+        reward_batch = torch.cat(batch.reward)
+
+        state_action_values = self.policy_net(state_batch).gather(1, action_batch)
+
+        next_state_values = torch.zeros(self.batch_size)
+        
+        next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1)[0].detach()
+        
+        expected_state_action_values = (next_state_values * self.gamma) + reward_batch
+
+        loss = F.smooth_l1_loss(state_action_values,
+                                expected_state_action_values.unsqueeze(1))
+
+        # Optimize the model
+        self.optimizer.zero_grad()
+        
+        loss.backward()
+        
+        for param in self.policy_net.parameters():
+            param.grad.data.clamp_(-1, 1)
+            
+        self.optimizer.step()
+
+    def train(self, env, num_episodes):
+        for i in range(num_episodes):
+            state = env.reset()
+            state = torch.from_numpy(state).float().unsqueeze(0)
+
+            for t in count():
+                action = self.select_action(state)
+                next_state, reward, done, _ = env.step(action.item())
+                reward = torch.tensor([reward], dtype=torch.float32)
+
+                if not done:
+                    next_state = torch.from_numpy(next_state).float().unsqueeze(0)
+                else:
+                    next_state = None
+
+                self.memory.push(state, action, next_state, reward)
+                state = next_state
+
+                self.optimize()
+
+                if done:
+                    break
+
+            if i % 10 == 0:
+                self.target_net.load_state_dict(self.policy_net.state_dict()) """
