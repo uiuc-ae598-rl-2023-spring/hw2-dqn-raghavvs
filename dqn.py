@@ -40,8 +40,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from collections import deque
-from collections import namedtuple
+from collections import deque, namedtuple
 
 # Define constants
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
