@@ -159,6 +159,7 @@ class DQNAgent:
                 self.target_net.load_state_dict(self.policy_net.state_dict())
 
             rewards.append(episode_reward)
+            #avg_rewards = [sum(rewards[:i+1])/len(rewards[:i+1]) for i in range(len(rewards))]
             #print(f'Episode {i_episode}: reward={episode_reward:.2f}')
 
         return rewards

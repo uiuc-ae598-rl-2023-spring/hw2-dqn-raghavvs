@@ -21,7 +21,7 @@ def main():
     batch_size = 128
     gamma = 0.95
     target_update = 10
-    num_episodes = 300
+    num_episodes = 100
     max_num_steps = 200
 
     # Create the DQN agent
@@ -38,7 +38,7 @@ def main():
     plt.plot(rewards)
     plt.xlabel('Episode')
     plt.ylabel('Return')
-    plt.ylim([0, 50])
+    plt.ylim(bottom=0)
     plt.title('Learning Curve')
     plt.savefig('figures/learning_curve.png') 
 
@@ -136,19 +136,19 @@ def main():
 
     # Condition 1: with replay, with target Q
     agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=batch_size, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update)
-    rewards1 = agent1.train(env, num_episodes=num_episodes)
+    rewards1 = agent1.train(env, num_episodes=100)
 
     # Condition 2: with replay, without target Q
     agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=batch_size, gamma=gamma, max_num_steps=max_num_steps, target_update=float('inf'))
-    rewards2 = agent1.train(env, num_episodes=num_episodes)
+    rewards2 = agent1.train(env, num_episodes=100)
 
     # Condition 3: without replay, with target Q
     agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update)
-    rewards3 = agent1.train(env, num_episodes=num_episodes)
+    rewards3 = agent1.train(env, num_episodes=100)
 
     # Condition 3: without replay, without target Q
     agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=float('inf'))
-    rewards4 = agent1.train(env, num_episodes=num_episodes)
+    rewards4 = agent1.train(env, num_episodes=100)
 
     plt.figure()
     plt.plot(rewards1)
@@ -173,6 +173,7 @@ print(f"Time taken: {end_time - start_time} seconds")
 """ 
 Time taken for 100 episodes:  289 seconds
 Time taken for 300 episodes:  289 seconds
+Time taken: 4969.680328845978 seconds
 
 Rewards:
 Episode 89: reward=14.00
