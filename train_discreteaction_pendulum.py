@@ -1,10 +1,13 @@
 import random
+import time
 import numpy as np
 import torch
 from collections import deque
 import matplotlib.pyplot as plt
 from discreteaction_pendulum import Pendulum
 from dqn import DQNAgent
+
+start_time = time.time()
 
 # Define constants
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -18,7 +21,7 @@ def main():
     batch_size = 128
     gamma = 0.95
     target_update = 10
-    num_episodes = 100
+    num_episodes = 300
     max_num_steps = 200
 
     # Create the DQN agent
@@ -35,7 +38,7 @@ def main():
     plt.plot(rewards)
     plt.xlabel('Episode')
     plt.ylabel('Return')
-    plt.ylim(bottom=0)
+    plt.ylim([0, 50])
     plt.title('Learning Curve')
     plt.savefig('figures/learning_curve.png') 
 
@@ -155,7 +158,7 @@ def main():
     plt.legend(['with replay, with target Q', 'with replay, without target Q', 'without replay, with target Q', 'without replay, without target Q'])
     plt.xlabel('Episode')
     plt.ylabel('Return')
-    plt.ylim([0, 100])
+    plt.ylim([0, 40])
     plt.title('Learning Curve')
     plt.savefig('figures/ablation_study_learning_curve.png') 
 
@@ -163,9 +166,15 @@ def main():
 if __name__ == '__main__':
     main()
 
+end_time = time.time()
+print(f"Time taken: {end_time - start_time} seconds")
 
 
-""" Rewards:
+""" 
+Time taken for 100 episodes:  289 seconds
+Time taken for 300 episodes:  289 seconds
+
+Rewards:
 Episode 89: reward=14.00
 Episode 90: reward=15.00
 Episode 91: reward=19.00

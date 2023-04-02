@@ -54,6 +54,10 @@ class DQN(nn.Module):
         self.fc3 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
+        x = x.to(device)
+        self.fc1.to(device)
+        self.fc2.to(device)
+        self.fc3.to(device)
         x = torch.tanh(self.fc1(x))
         x = torch.tanh(self.fc2(x))
         return self.fc3(x)
@@ -106,12 +110,12 @@ class DQNAgent:
         transitions = self.memory.sample(self.batch_size)
         batch = Transition(*zip(*transitions))
         non_final_mask = torch.tensor(tuple(map(lambda s: s is not None,
-                                          batch.next_state)), device=device, dtype=torch.bool)
-        non_final_next_states = torch.cat([s for s in batch.next_state
-                                                    if s is not None])
-        state_batch = torch.cat(batch.state)
-        action_batch = torch.cat(batch.action)
-        reward_batch = torch.cat(batch.reward)
+                                  batch.next_state)), device=device, dtype=torch.bool)
+        non_final_next_states = torch.cat([s.to(device) for s in batch.next_state
+                                                        if s is not None])
+        state_batch = torch.cat([s.to(device) for s in batch.state])
+        action_batch = torch.cat([a.to(device) for a in batch.action])
+        reward_batch = torch.cat([r.to(device) for r in batch.reward])
         state_action_values = self.policy_net(state_batch).gather(1, action_batch)
         next_state_values = torch.zeros(self.batch_size, device=device)
         next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1)[0].detach()
