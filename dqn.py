@@ -104,7 +104,7 @@ class DQNAgent:
         with torch.no_grad():
             return self.policy_net(state).max(1)[1].view(1, 1)
         
-    def optimize_model(self, max_num_steps):
+    def optimize_model(self):
         if len(self.memory) < self.batch_size:
             return
         transitions = self.memory.sample(self.batch_size)
@@ -120,14 +120,12 @@ class DQNAgent:
         next_state_values = torch.zeros(self.batch_size, device=device)
         next_state_values[non_final_mask] = self.target_net(non_final_next_states).max(1)[0].detach()
         expected_state_action_values = (next_state_values * self.gamma) + reward_batch
-        loss = F.smooth_l1_loss(state_action_values, expected_state_action_values.unsqueeze(1))
+        loss = F.mse_loss(state_action_values, expected_state_action_values.unsqueeze(1))
         self.optimizer.zero_grad()
         loss.backward()
         for param in self.policy_net.parameters():
             param.grad.data.clamp_(-1, 1)
         self.optimizer.step()
-        if max_num_steps % self.target_update == 0:
-            self.target_net.load_state_dict(self.policy_net.state_dict())
 
     def get_policy_net(self):
         return self.policy_net
@@ -150,15 +148,15 @@ class DQNAgent:
                 self.memory.push(state, action, next_state, reward)
                 state = next_state
                 episode_reward += reward.item()
-                self.optimize_model(self.max_num_steps)
+                self.optimize_model()
 
                 if done:
                     break
 
+            rewards.append(episode_reward)
             if i_episode % self.target_update == 0:
                 self.target_net.load_state_dict(self.policy_net.state_dict())
 
-            rewards.append(episode_reward)
             #avg_rewards = [sum(rewards[:i+1])/len(rewards[:i+1]) for i in range(len(rewards))]
             #print(f'Episode {i_episode}: reward={episode_reward:.2f}')
 
