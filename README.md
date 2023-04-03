@@ -1,5 +1,9 @@
 ## CR: Johnsgeorge03
 
+### Results - Animation
+
+![trained video of pendulum](figures/train_discreteaction_pendulum.gif)
+
 # HW2 - DQN
 
 ## What to do
