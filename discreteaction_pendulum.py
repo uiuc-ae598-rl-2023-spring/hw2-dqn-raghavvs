@@ -1,8 +1,9 @@
 import numpy as np
+import torch
 import scipy.integrate
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-
+from matplotlib.animation import PillowWriter
 
 class Pendulum():
     def __init__(self, rg=None, num_actions=31):
@@ -115,7 +116,8 @@ class Pendulum():
         s_traj = [s]
         done = False
         while not done:
-            (s, r, done) = self.step(policy(s))
+            #(s, r, done) = self.step(policy(s))
+            (s, r, done) = self.step(torch.argmax(policy(torch.tensor(s).float())))
             s_traj.append(s)
 
         fig = plt.figure(figsize=(5, 4))
@@ -131,7 +133,11 @@ class Pendulum():
             text.set_text(f'time = {i * self.dt:3.1f}')
             return line, text
 
+        # Create a PillowWriter object
+        pillow_writer = PillowWriter(fps=10)
+
         anim = animation.FuncAnimation(fig, animate, len(s_traj), interval=(1000 * self.dt), blit=True, repeat=False)
-        anim.save(filename, writer=writer, fps=10)
+         # Pass the PillowWriter object to the save function
+        anim.save(filename, writer=pillow_writer)
 
         plt.close()

@@ -17,15 +17,16 @@ def main():
     env = Pendulum()
 
     # Set the hyperparameters
-    input_size = 64
+    hidden_size = 64
     batch_size = 128
     gamma = 0.95
     target_update = 10
     num_episodes = 100
     max_num_steps = 200
+    epsilon = 0.5
 
     # Create the DQN agent
-    agent = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=batch_size, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update)
+    agent = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update, epsilon)
     policy = agent.get_policy_net()
     rewards = agent.train(env, num_episodes)
     
@@ -92,7 +93,7 @@ def main():
 
     ###---PLOT-3: Animated gif of an example trajectory---###
 
-    #env.video(policy, filename='figures/train_discreteaction_pendulum.gif')
+    env.video(policy, filename='figures/train_discreteaction_pendulum.gif')
 
     ###---PLOT-4: Policy---###
 
@@ -135,19 +136,19 @@ def main():
     ###---Ablation Study---###
 
     # Condition 1: with replay, with target Q
-    agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=batch_size, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update)
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update, epsilon)
     rewards1 = agent1.train(env, num_episodes=100)
 
     # Condition 2: with replay, without target Q
-    agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=batch_size, gamma=gamma, max_num_steps=max_num_steps, target_update=float('inf'))
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update=float('inf'), epsilon=epsilon)
     rewards2 = agent1.train(env, num_episodes=100)
 
     # Condition 3: without replay, with target Q
-    agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update)
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update, epsilon=epsilon)
     rewards3 = agent1.train(env, num_episodes=100)
 
     # Condition 3: without replay, without target Q
-    agent1 = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=float('inf'))
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=float('inf'), epsilon=epsilon)
     rewards4 = agent1.train(env, num_episodes=100)
 
     plt.figure()
@@ -158,7 +159,7 @@ def main():
     plt.legend(['with replay, with target Q', 'with replay, without target Q', 'without replay, with target Q', 'without replay, without target Q'])
     plt.xlabel('Episode')
     plt.ylabel('Return')
-    plt.ylim([0, 40])
+    plt.ylim([0, 100])
     plt.title('Learning Curve')
     plt.savefig('figures/ablation_study_learning_curve.png') 
 

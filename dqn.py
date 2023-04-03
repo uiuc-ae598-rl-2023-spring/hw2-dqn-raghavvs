@@ -85,7 +85,7 @@ class ReplayMemory(object):
 
 # Define the DQN agent
 class DQNAgent:
-    def __init__(self, input_size, hidden_size, output_size, batch_size, gamma, max_num_steps, target_update):
+    def __init__(self, input_size, hidden_size, output_size, batch_size, gamma, max_num_steps, target_update, epsilon):
         self.policy_net = DQN(input_size, hidden_size, output_size)
         self.target_net = DQN(input_size, hidden_size, output_size)
         self.target_net.load_state_dict(self.policy_net.state_dict())
@@ -99,10 +99,16 @@ class DQNAgent:
         self.gamma = gamma
         self.max_num_steps = max_num_steps
         self.target_update = target_update
+        self.epsilon = epsilon
 
     def select_action(self, state):
-        with torch.no_grad():
-            return self.policy_net(state).max(1)[1].view(1, 1)
+        # Epsilon-greedy action selection
+        if random.random() < self.epsilon:
+            return torch.tensor([[random.randrange(self.policy_net.fc3.out_features)]], device=device, dtype=torch.long)
+        else:
+            with torch.no_grad():
+                return self.policy_net(state).max(1)[1].view(1, 1)
+
         
     def optimize_model(self):
         if len(self.memory) < self.batch_size:
