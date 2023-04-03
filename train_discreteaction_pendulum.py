@@ -21,7 +21,7 @@ def main():
     batch_size = 128
     gamma = 0.95
     target_update = 10
-    num_episodes = 100
+    num_episodes = 1000
     max_num_steps = 200
     epsilon = 0.5
 
@@ -175,6 +175,9 @@ print(f"Time taken: {end_time - start_time} seconds")
 Time taken for 100 episodes:  289 seconds
 Time taken for 300 episodes:  289 seconds
 Time taken: 4969.680328845978 seconds
+RTX 3090
+Time taken: 718.3987 seconds
+Time taken: 815.1202869415283 seconds
 
 Rewards:
 Episode 89: reward=14.00
