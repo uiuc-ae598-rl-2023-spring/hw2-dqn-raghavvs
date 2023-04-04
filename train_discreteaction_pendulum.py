@@ -21,12 +21,13 @@ def main():
     batch_size = 128
     gamma = 0.95
     target_update = 10
-    num_episodes = 1000
+    num_episodes = 100
     max_num_steps = 200
     epsilon = 0.5
+    learning_rate = 1e-2
 
     # Create the DQN agent
-    agent = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update, epsilon)
+    agent = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update, epsilon, learning_rate)
     policy = agent.get_policy_net()
     rewards = agent.train(env, num_episodes)
     
@@ -136,19 +137,19 @@ def main():
     ###---Ablation Study---###
 
     # Condition 1: with replay, with target Q
-    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update, epsilon)
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update, epsilon, learning_rate)
     rewards1 = agent1.train(env, num_episodes=100)
 
     # Condition 2: with replay, without target Q
-    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update=float('inf'), epsilon=epsilon)
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size, gamma, max_num_steps, target_update=float('inf'), epsilon=epsilon,  learning_rate=learning_rate)
     rewards2 = agent1.train(env, num_episodes=100)
 
     # Condition 3: without replay, with target Q
-    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update, epsilon=epsilon)
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update, epsilon=epsilon, learning_rate=learning_rate)
     rewards3 = agent1.train(env, num_episodes=100)
 
     # Condition 3: without replay, without target Q
-    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=float('inf'), epsilon=epsilon)
+    agent1 = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size=1, gamma=gamma, max_num_steps=max_num_steps, target_update=float('inf'), epsilon=epsilon, learning_rate=learning_rate)
     rewards4 = agent1.train(env, num_episodes=100)
 
     plt.figure()
@@ -175,9 +176,10 @@ print(f"Time taken: {end_time - start_time} seconds")
 Time taken for 100 episodes:  289 seconds
 Time taken for 300 episodes:  289 seconds
 Time taken: 4969.680328845978 seconds
-RTX 3090
+RTX 3090 - 1000 episodes
 Time taken: 718.3987 seconds
 Time taken: 815.1202869415283 seconds
+Time taken: 821.0672054290771 seconds
 
 Rewards:
 Episode 89: reward=14.00

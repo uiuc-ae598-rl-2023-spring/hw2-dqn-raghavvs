@@ -17,17 +17,17 @@ def main():
     env = Pendulum()
 
     # Set the hyperparameters
-    input_size = 64
+    hidden_size = 64
     batch_sizes = [32, 64, 128]
-    gammas = [0.9, 0.95, 0.99]
+    gammas = [0.1, 0.5, 0.9]
     target_update = 10
-    num_episodes = 100
+    num_episodes = 1000
     max_num_steps = 200
 
     # Create the DQN agent
     for batch_size in batch_sizes:
         for gamma in gammas:
-            agent = DQNAgent(env.num_states, input_size, env.num_actions, batch_size=batch_size, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update)
+            agent = DQNAgent(env.num_states, hidden_size, env.num_actions, batch_size=batch_size, gamma=gamma, max_num_steps=max_num_steps, target_update=target_update)
             policy = agent.get_policy_net()
             rewards = agent.train(env, num_episodes)
 

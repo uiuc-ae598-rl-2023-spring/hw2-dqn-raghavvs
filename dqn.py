@@ -85,13 +85,13 @@ class ReplayMemory(object):
 
 # Define the DQN agent
 class DQNAgent:
-    def __init__(self, input_size, hidden_size, output_size, batch_size, gamma, max_num_steps, target_update, epsilon):
+    def __init__(self, input_size, hidden_size, output_size, batch_size, gamma, max_num_steps, target_update, epsilon, learning_rate):
         self.policy_net = DQN(input_size, hidden_size, output_size)
         self.target_net = DQN(input_size, hidden_size, output_size)
         self.target_net.load_state_dict(self.policy_net.state_dict())
         self.target_net.eval()
         
-        self.optimizer = optim.Adam(self.policy_net.parameters())
+        self.optimizer = optim.Adam(self.policy_net.parameters(), lr=learning_rate)
         
         self.memory = ReplayMemory(10000)
         
@@ -100,6 +100,7 @@ class DQNAgent:
         self.max_num_steps = max_num_steps
         self.target_update = target_update
         self.epsilon = epsilon
+        self.learning_rate = learning_rate
 
     def select_action(self, state):
         # Epsilon-greedy action selection
