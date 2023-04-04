@@ -1,8 +1,8 @@
-### CR: Johnsgeorge03
-
 ## Results - Animation after training
 
 ![trained video of pendulum](figures/train_discreteaction_pendulum.gif)
+
+### CR: Johnsgeorge03
 
 # HW2 - DQN
 
