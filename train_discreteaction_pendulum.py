@@ -39,7 +39,7 @@ def main():
     plt.plot(rewards)
     plt.xlabel('Episode')
     plt.ylabel('Return')
-    plt.ylim(bottom=0)
+    #plt.ylim(bottom=0)
     plt.title('Learning Curve')
     plt.savefig('figures/learning_curve.png') 
 
@@ -159,7 +159,7 @@ def main():
     plt.legend(['with replay, with target Q', 'with replay, without target Q', 'without replay, with target Q', 'without replay, without target Q'])
     plt.xlabel('Episode')
     plt.ylabel('Return')
-    plt.ylim([0, 100])
+    #plt.ylim([0, 100])
     plt.title('Learning Curve')
     plt.savefig('figures/ablation_study_learning_curve.png') 
 
