@@ -21,9 +21,9 @@ def main():
     batch_size = 128
     gamma = 0.95
     target_update = 10
-    num_episodes = 100
+    num_episodes = 1000
     max_num_steps = 200
-    epsilon = 0.5
+    epsilon = 0.9
     learning_rate = 1e-2
 
     # Create the DQN agent
@@ -160,7 +160,7 @@ def main():
     plt.legend(['with replay, with target Q', 'with replay, without target Q', 'without replay, with target Q', 'without replay, without target Q'])
     plt.xlabel('Episode')
     plt.ylabel('Return')
-    #plt.ylim([0, 100])
+    plt.ylim(bottom=0)
     plt.title('Learning Curve')
     plt.savefig('figures/ablation_study_learning_curve.png') 
 
